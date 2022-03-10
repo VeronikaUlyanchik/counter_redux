@@ -3,55 +3,39 @@ import './App.css';
 import s from './counter1.module.css'
 import {Counter} from "./Counter";
 import {InstallValues} from "./InstallValues";
+import {CounterPropsType} from "./RoutesList";
 
 
-function App() {
+function Counter1(props: CounterPropsType) {
+    const {
+        state,
+        setMinLocal,
+        setMaxLocal,
+        setMaxMin,
+        incCount,
+        resetCount
+    } = props;
 
-    const LSNumber = (key:string) => {
-        let localStorageN = localStorage.getItem(key);
-        if (localStorageN) {
-            return JSON.parse(localStorageN)
-        }
-    };
-
-    let [count, setCount] = useState(LSNumber('count') || 0);
-    let [min, setMinLocal] = useState(LSNumber('min') || 0);
-    let [max, setMaxLocal] = useState(LSNumber('max') || 0);
     let [inactiveCounter, setInactiveCounter] = useState(false);
     let [disable, setAble] = useState(true);
 
-    useEffect(()=> {
-        setToLocalStorage(count, "count");
-    },[count]);
 
-    const incCount = () => {
-        if(count<max) {
-            setCount(count + 1);
-        }
-    };
-    const resetCount = () => {
-        setCount(min);
-    };
-    const setMinMax =  (min:number, max:number)=> {
-        setToLocalStorage(min, "min");
-        setToLocalStorage(max, "max");
-        setCount(min);
-        setMaxLocal(max);
-    };
-    const setToLocalStorage = (item:number, key:string) => {
-        localStorage.setItem(key, JSON.stringify(item));
-    }
-    const activateCounter =(value:boolean) => {
+    const activateCounter = (value: boolean) => {
         setInactiveCounter(value)
     }
-     const error = ((max<0 || min<0) || max===min || max<min ) && true;
+    const error = ((state.maxValue < 0 || state.startValue < 0) || state.maxValue === state.startValue || state.maxValue < state.startValue) && true;
 
     return (
         <div className={s.counter1}>
-            <InstallValues error={error}  activateCounter= {activateCounter} setMinLocal={setMinLocal} setMaxLocal={setMaxLocal} min={min} max={max} setMaxMin={setMinMax} disable={disable} setAble={setAble}/>
-            <Counter error={error} count={count} disabled={inactiveCounter} maxValue={max} incCount={incCount} resetCount={resetCount} startValue={min}/>
+            <InstallValues error={error} activateCounter={activateCounter} setMinLocal={setMinLocal}
+                           setMaxLocal={setMaxLocal} min={state.startValue} max={state.maxValue} setMaxMin={setMaxMin}
+                           disable={disable}
+                           setAble={setAble}/>
+            <Counter error={error} count={state.count} disabled={inactiveCounter} maxValue={state.maxValue}
+                     incCount={incCount}
+                     resetCount={resetCount} startValue={state.startValue}/>
         </div>
     );
 }
 
-export default App;
+export default Counter1;
